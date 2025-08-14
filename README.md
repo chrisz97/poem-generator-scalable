@@ -69,3 +69,8 @@ dotnet ef database update
 In the future the migration should be added to the cluster using a migration job and initContainers.
 
 Security aspect: the database connection string should be transfered to a K8s secret and then mounted to the pod.
+
+## 4. Implement CQRS Pattern
+```shell
+docker build -t poem-generator:5-dev .
+```

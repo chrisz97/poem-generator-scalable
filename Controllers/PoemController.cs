@@ -1,64 +1,48 @@
 using Microsoft.AspNetCore.Mvc;
-using PoemGenerator.Monolith.Services;
 using PoemGenerator.Models;
 using Microsoft.Extensions.Caching.Memory;
+using MediatR;
+using PoemGenerator.Monolith.Cqrs.Commands;
+using PoemGenerator.Monolith.Cqrs.Queries;
 
 namespace PoemGenerator.Monolith.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class PoemController(IPoemService poemService, ILogger<PoemController> logger, IMemoryCache memoryCache) : ControllerBase
+public class PoemController(IMediator mediator, IMemoryCache memoryCache) : ControllerBase
 {
-    private readonly IPoemService _poemService = poemService;
-    private readonly ILogger<PoemController> _logger = logger;
-
     [HttpPost]
-    public Poem CreatePoem([FromBody] CreatePoemRequest request)
+    public async Task<Poem> CreatePoemAsync([FromBody] CreatePoemRequest request)
     {
-        _logger.LogInformation("Received a poem create request with length: {Length}", request.Length);
-
-        var poem = _poemService.CreatePoem(request).Result;
-
+        var poem = await mediator.Send(new CreatePoemCommand(request.Length));
         memoryCache.Set(poem.Id, poem, TimeSpan.FromMinutes(5));
         memoryCache.Remove("allPoems");
-
         return poem;
     }
 
     [HttpGet("{id}")]
-    public ActionResult<Poem> GetPoem(int id)
+    public async Task<ActionResult<Poem>> GetPoem(int id)
     {
-        if (memoryCache.TryGetValue(id, out var cachedPoem))
+        if (memoryCache.TryGetValue(id, out Poem? poem))
         {
-            _logger.LogInformation("Returning cached poem with ID {Id}", id);
-            return Ok(cachedPoem);
-        }
-
-        try
-        {
-            var poem = _poemService.GetPoem(id).Result;
-            memoryCache.Set(id, poem, TimeSpan.FromMinutes(5));
             return Ok(poem);
         }
-        catch (KeyNotFoundException)
-        {
-            return NotFound($"Poem with ID {id} not found.");
-        }
+
+        poem = await mediator.Send(new GetPoemByIdQuery(id));
+        memoryCache.Set(poem.Id, poem, TimeSpan.FromMinutes(5));
+        return Ok(poem);
     }
 
     [HttpGet]
-    public IEnumerable<Poem> GetAllPoems()
+    public async Task<ActionResult<IEnumerable<Poem>>> GetAllPoems()
     {
-        if (memoryCache.TryGetValue<IEnumerable<Poem>>("allPoems", out var cachedPoems) && cachedPoems != null)
+        if (memoryCache.TryGetValue("allPoems", out IEnumerable<Poem>? poems))
         {
-            _logger.LogInformation("Returning cached poems.");
-            return cachedPoems;
+            return Ok(poems);
         }
 
-        var poems = _poemService.GetAllPoems().Result;
-
+        poems = await mediator.Send(new GetAllPoemsQuery());
         memoryCache.Set("allPoems", poems, TimeSpan.FromMinutes(5));
-
-        return poems;
+        return Ok(poems);
     }
 }

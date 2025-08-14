@@ -6,7 +6,7 @@ global:
       database: "poemsdb"
 app:
   image:
-    name: poem-generator:4-dev
+    name: poem-generator:5-dev
     pullPolicy: IfNotPresent
   service:
     containerPort: 8080

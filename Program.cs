@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using PoemGenerator.Monolith.Data;
 using PoemGenerator.Monolith.Repositories;
 using PoemGenerator.Monolith.Services;
+using MediatR;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +12,7 @@ builder.Services.AddMemoryCache();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 
 // Configure Entity Framework with Postgres
 string? constr = builder.Configuration.GetConnectionString("DefaultConnection");
