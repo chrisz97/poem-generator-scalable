@@ -36,4 +36,11 @@ docker build -t poem-generator:1-dev .
 
 ## 2. Write a configurable Helm Chart
 
+Deploy
+```shell
+helm upgrade -i poem-generator ./helm -n poem-generator --create-namespace
+```
+
+Visit https://poetrydb.local.test/swagger
+
 ## 3. Switch from SQLite to PostgreSQL

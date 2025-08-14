@@ -1,0 +1,20 @@
+global:
+  storageClass: hostpath
+app:
+  image:
+    name: poem-generator:1-dev
+    pullPolicy: IfNotPresent
+  service:
+    containerPort: 8080
+    servicePort: 443
+    ingress:
+      host: poetrydb.local.test
+      className: "nginx"
+      annotations:
+        cert-manager.io/cluster-issuer: local-ca-issuer
+        cert-manager.io/common-name: poetrydb.local.test
+        cert-manager.io/subject-organizations: Netconnections
+        cert-manager.io/subject-organizationalunits: "Development,DevOps"
+  env:
+    ASPNETCORE_ENVIRONMENT: Development
+    ASPNETCORE_URLS: http://+:8080
