@@ -6,7 +6,7 @@ global:
       database: "poemsdb"
 app:
   image:
-    name: poem-generator:5-dev
+    name: poem-generator:7-dev
     pullPolicy: IfNotPresent
   service:
     containerPort: 8080
@@ -26,7 +26,16 @@ app:
 dependencies:
   postgresql:
     enabled: true
+  messaging:
+    enabled: true
 db:
   primary:
     persistence:
       size: 1Gi
+messaging:
+  auth:
+    username: user
+    password: rabbitx
+  persistence:
+    enabled: true
+    size: 1Gi

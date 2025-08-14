@@ -5,6 +5,7 @@ using PoemGenerator.Monolith.Services;
 using MediatR;
 using System.Reflection;
 using PoemGenerator.Monolith.Notifications;
+using PoemGenerator.Monolith.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
+builder.Services.Configure<RabbitMqOptions>(
+    builder.Configuration.GetSection("RabbitMq"));
 builder.Services.AddSingleton<INotificationService, RabbitMqNotificationService>();
 
 

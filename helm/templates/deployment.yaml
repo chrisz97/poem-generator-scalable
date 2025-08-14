@@ -5,6 +5,7 @@ metadata:
   labels:
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: {{ .Release.Name }}
+    app: {{ .Release.Name }}-deployment
 spec:
   selector:
     matchLabels:
@@ -14,6 +15,7 @@ spec:
       labels:
         app.kubernetes.io/name: {{ .Chart.Name }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+        app: {{ .Release.Name }}-deployment
     spec:
       containers:
         - name: {{ .Chart.Name }}

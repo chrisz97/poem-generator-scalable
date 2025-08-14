@@ -45,8 +45,11 @@ Check
 ```shell
 kubectl get pods -n poem-generator
 kubectl get ingress -n poem-generator
+kubectl get svc -n poem-generator
 kubectl get deployments -n poem-generator
-kubectl -n poem-generator exec -it "$(kubectl -n poem-generator get pods -l app.kubernetes.io/instance=poem-generator -o jsonpath='{.items[0].metadata.name}')" -- bash
+kubectl get statefulsets -n poem-generator
+kubectl -n poem-generator exec -it "$(kubectl -n poem-generator get pods -l app=poem-generator-deployment -o jsonpath='{.items[0].metadata.name}')" -- bash
+kubectl logs -n poem-generator "$(kubectl -n poem-generator get pods -l app=poem-generator-deployment -o jsonpath='{.items[0].metadata.name}')" -f
 ```
 
 Visit https://poetrydb.local.test/swagger
@@ -77,3 +80,7 @@ docker build -t poem-generator:5-dev .
 
 ## 5. Add Async Notifications
 RabbitMQ used to send asynchronous notifications when a poem is published.
+```shell
+helm dependency update ./helm
+docker build -t poem-generator:7-dev .
+```

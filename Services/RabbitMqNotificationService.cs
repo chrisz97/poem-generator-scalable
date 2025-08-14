@@ -1,5 +1,7 @@
 using System.Text;
 using System.Text.Json;
+using Microsoft.Extensions.Options;
+using PoemGenerator.Monolith.Configuration;
 using RabbitMQ.Client;
 
 namespace PoemGenerator.Monolith.Notifications;
@@ -10,14 +12,14 @@ public class RabbitMqNotificationService : INotificationService
     private readonly IChannel _channel;
     private readonly string _exchangeName = "poem.notifications";
 
-    public RabbitMqNotificationService()
+    public RabbitMqNotificationService(IOptions<RabbitMqOptions> options)
     {
         var factory = new ConnectionFactory
         {
-            HostName = "rabbitmq", // change if your service name is different
-            Port = 5672,
-            UserName = "guest",
-            Password = "guest"
+            HostName = options.Value.HostName,
+            Port = options.Value.Port,
+            UserName = options.Value.UserName,
+            Password = options.Value.Password
         };
 
         _connection = factory.CreateConnectionAsync().Result;
