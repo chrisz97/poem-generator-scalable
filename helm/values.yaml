@@ -1,8 +1,12 @@
 global:
-  storageClass: hostpath
+  defaultStorageClass: hostpath
+  postgresql:
+    auth:
+      postgresPassword: "dbpwx123"
+      database: "poemsdb"
 app:
   image:
-    name: poem-generator:1-dev
+    name: poem-generator:4-dev
     pullPolicy: IfNotPresent
   service:
     containerPort: 8080
@@ -18,3 +22,11 @@ app:
   env:
     ASPNETCORE_ENVIRONMENT: Development
     ASPNETCORE_URLS: http://+:8080
+    DB_CONNECTION_STRING: "Host=poem-generator-db-hl;Port=5432;Database=poemsdb;Username=postgres;Password=dbpwx123;SSL Mode=Disable"
+dependencies:
+  postgresql:
+    enabled: true
+db:
+  primary:
+    persistence:
+      size: 1Gi

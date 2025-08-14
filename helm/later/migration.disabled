@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-migrate
+  labels:
+    app.kubernetes.io/name: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: ef-migrator
+          image: {{ .Values.app.image.name | quote }}
+          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+
+          # Wait for Postgres (simple loop)
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Waiting for PostgreSQL..."
+              until pg_isready -h {{ printf "%s-db-hl" .Release.Name }} -p 5432; do
+                sleep 2
+              done
+              echo "Running migrations..."
+              dotnet ef database update --no-build --project /app/PoemGenerator.Scalable.csproj
+
+          env:
+            {{- range $key, $value := .Values.app.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}

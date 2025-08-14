@@ -1,3 +1,9 @@
 apiVersion: v2
-version: "1.0.0"
+version: "2.0.0"
 name: poem-generator
+dependencies:
+- name: postgresql
+  alias: db
+  version: "16.7.24"
+  repository: https://charts.bitnami.com/bitnami
+  condition: dependencies.postgresql.enabled

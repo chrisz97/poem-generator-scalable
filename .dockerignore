@@ -7,3 +7,4 @@ Dockerfile
 helm/
 poems.db
 poems.db*
+appsettings.*.json

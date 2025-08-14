@@ -41,6 +41,31 @@ Deploy
 helm upgrade -i poem-generator ./helm -n poem-generator --create-namespace
 ```
 
+Check
+```shell
+kubectl get pods -n poem-generator
+kubectl get ingress -n poem-generator
+kubectl get deployments -n poem-generator
+kubectl -n poem-generator exec -it "$(kubectl -n poem-generator get pods -l app.kubernetes.io/instance=poem-generator -o jsonpath='{.items[0].metadata.name}')" -- bash
+```
+
 Visit https://poetrydb.local.test/swagger
 
 ## 3. Switch from SQLite to PostgreSQL
+
+Update the helm dependency in the chart:
+```shell
+helm dependency update ./helm
+helm uninstall poem-generator -n poem-generator
+docker build -t poem-generator:4-dev .
+```
+
+Execute the migration locally for now:
+```shell
+kubectl -n poem-generator port-forward svc/poem-generator-db-hl 5432:5432
+dotnet ef migrations add InitialPg
+dotnet ef database update
+```
+In the future the migration should be added to the cluster using a migration job and initContainers.
+
+Security aspect: the database connection string should be transfered to a K8s secret and then mounted to the pod.
