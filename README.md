@@ -84,3 +84,6 @@ RabbitMQ used to send asynchronous notifications when a poem is published.
 helm dependency update ./helm
 docker build -t poem-generator:7-dev .
 ```
+
+## 6. Infrastructure
+For the Prometheus and Grafana infrastructure see [infra](./infra).

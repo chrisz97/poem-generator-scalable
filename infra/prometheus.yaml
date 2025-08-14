@@ -1,0 +1,25 @@
+server:
+  persistentVolume:
+    size: 2Gi
+    storageClass: hostpath
+
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: local-ca-issuer
+      cert-manager.io/common-name: k8s-prometheus.local.test
+      cert-manager.io/subject-organizations: Netconnections
+      cert-manager.io/subject-organizationalunits: "DevOps"
+    hosts:
+      - k8s-prometheus.local.test
+    tls:
+      - secretName: prometheus-tls
+        hosts:
+          - k8s-prometheus.local.test
+prometheus-pushgateway:
+  enabled: false
+prometheus-node-exporter:
+  enabled: true
+  hostRootFsMount:
+    enabled: false
