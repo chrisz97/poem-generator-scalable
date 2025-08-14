@@ -74,3 +74,6 @@ Security aspect: the database connection string should be transfered to a K8s se
 ```shell
 docker build -t poem-generator:5-dev .
 ```
+
+## 5. Add Async Notifications
+RabbitMQ used to send asynchronous notifications when a poem is published.
