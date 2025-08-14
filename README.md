@@ -24,3 +24,16 @@ A SQLite database is used to store the generated poems.
 Refactor the simple Poem Generator API into a cloud-native architecture.
 
 See the information we send you for more details.
+
+# Solution
+
+## 1. Containerize Application
+Create a Dockerfile and build a docker image.
+
+```shell
+docker build -t poem-generator:1-dev .
+```
+
+## 2. Write a configurable Helm Chart
+
+## 3. Switch from SQLite to PostgreSQL

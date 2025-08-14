@@ -1,0 +1,9 @@
+bin/
+obj/
+Properties/
+.vs/
+.vscode/
+Dockerfile
+helm/
+poems.db
+poems.db*

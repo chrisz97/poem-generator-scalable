@@ -1,2 +1,9 @@
 bin/
 obj/
+.vs/
+.vscode/
+
+# for SQLite
+poems.db
+poems.db-shm
+poems.db-wal
